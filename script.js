@@ -5,14 +5,13 @@ const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
 
 // Update this URL to your deployed Cloudflare Worker.
-const API_URL = "https://loreal-chatbot.your-subdomain.workers.dev/";
+const API_URL = "https://misty-bar-8439.mrablugh.workers.dev/";
 
 // Keep a small conversation history so the assistant can respond in context.
 const messages = [
   {
     role: "system",
-    content:
-      `You are a helpful and knowledgeable chatbot specializing in L’Oréal’s complete portfolio of products, including makeup, skincare, haircare, and fragrances. Assist users in discovering products, understanding product benefits, and providing personalized recommendations and routines tailored to individual needs based solely on the L’Oréal family of brands.
+    content: `You are a helpful and knowledgeable chatbot specializing in L’Oréal’s complete portfolio of products, including makeup, skincare, haircare, and fragrances. Assist users in discovering products, understanding product benefits, and providing personalized recommendations and routines tailored to individual needs based solely on the L’Oréal family of brands.
 
 - Only respond to questions directly related to L’Oréal products, beauty routines, recommendations pertaining to L’Oréal offerings, or beauty-related advice using L’Oréal products.
 - If a user asks about non-L’Oréal products, unrelated brands, non-beauty topics, or requires advice outside the scope of L’Oréal products and routines, politely decline and clarify your area of expertise.
