@@ -4,7 +4,9 @@ const userInput = document.getElementById("userInput");
 const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
 
+// Show a friendly starter message.
 chatWindow.textContent = "👋 Hello! How can I help you today?";
+appendMessage("assistant", "");
 
 // Update this URL to your deployed Cloudflare Worker.
 const API_URL = "https://misty-bar-8439.mrablugh.workers.dev/";
@@ -57,15 +59,70 @@ Important reminders:
 ];
 
 
-appendMessage("assistant", "");
-
 function appendMessage(role, text) {
   const messageElement = document.createElement("div");
   messageElement.className = `msg ${role}`;
-  messageElement.textContent = text;
+
+  if (role === "assistant") {
+    messageElement.innerHTML = formatMarkdown(text);
+  } else {
+    messageElement.textContent = text;
+  }
+
   chatWindow.appendChild(messageElement);
   chatWindow.scrollTop = chatWindow.scrollHeight;
   return messageElement;
+}
+
+function escapeHtml(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function formatMarkdown(text) {
+  const escapedText = escapeHtml(text.trim());
+  const lines = escapedText.split(/\n+/);
+  const blocks = [];
+  let currentList = [];
+
+  const closeList = () => {
+    if (currentList.length === 0) {
+      return;
+    }
+
+    blocks.push(`<ol>${currentList.join("")}</ol>`);
+    currentList = [];
+  };
+
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+
+    if (!trimmedLine) {
+      closeList();
+      continue;
+    }
+
+    const orderedListMatch = trimmedLine.match(/^\d+\.\s+(.*)$/);
+    if (orderedListMatch) {
+      currentList.push(`<li>${formatInlineMarkdown(orderedListMatch[1])}</li>`);
+      continue;
+    }
+
+    closeList();
+    blocks.push(`<p>${formatInlineMarkdown(trimmedLine)}</p>`);
+  }
+
+  closeList();
+
+  return blocks.join("") || "<p></p>";
+}
+
+function formatInlineMarkdown(text) {
+  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
 function setFormState(isBusy) {
@@ -116,10 +173,9 @@ chatForm.addEventListener("submit", async (event) => {
 
   try {
     const reply = await sendMessage(userText);
-    loadingMessage.textContent = reply;
+    loadingMessage.innerHTML = formatMarkdown(reply);
   } catch (error) {
-    loadingMessage.textContent =
-      "Sorry, I couldn't get a response right now. Please try again.";
+    loadingMessage.textContent = "Sorry, I couldn't get a response right now. Please try again.";
     console.error(error);
   } finally {
     setFormState(false);
