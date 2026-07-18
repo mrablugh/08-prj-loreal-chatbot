@@ -57,8 +57,10 @@ body {
 
 /* messages */
 .msg {
+  display: block;
   margin-bottom: 14px;
   line-height: 1.5;
+  width: fit-content;
   max-width: 82%;
   padding: 12px 14px;
   border-radius: 16px;

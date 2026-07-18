@@ -83,45 +83,88 @@ function escapeHtml(text) {
 }
 
 function formatMarkdown(text) {
-  const escapedText = escapeHtml(text.trim());
-  const lines = escapedText.split(/\n+/);
+  const lines = escapeHtml(text.trim()).split(/\n/);
   const blocks = [];
-  let currentList = [];
+  let orderedItems = [];
+  let bulletItems = [];
 
-  const closeList = () => {
-    if (currentList.length === 0) {
+  const closeBulletList = () => {
+    if (bulletItems.length === 0) {
       return;
     }
 
-    blocks.push(`<ol>${currentList.join("")}</ol>`);
-    currentList = [];
+    blocks.push(
+      `<ul>${bulletItems
+        .map((item) => `<li>${formatInlineMarkdown(item)}</li>`)
+        .join("")}</ul>`,
+    );
+    bulletItems = [];
+  };
+
+  const closeOrderedList = () => {
+    if (orderedItems.length === 0) {
+      return;
+    }
+
+    blocks.push(
+      `<ol>${orderedItems
+        .map((item) => {
+          const nestedList =
+            item.subitems.length > 0
+              ? `<ul>${item.subitems
+                  .map((subitem) => `<li>${formatInlineMarkdown(subitem)}</li>`)
+                  .join("")}</ul>`
+              : "";
+
+          return `<li>${formatInlineMarkdown(item.text)}${nestedList}</li>`;
+        })
+        .join("")}</ol>`,
+    );
+    orderedItems = [];
   };
 
   for (const line of lines) {
     const trimmedLine = line.trim();
 
     if (!trimmedLine) {
-      closeList();
+      closeBulletList();
+      closeOrderedList();
       continue;
     }
 
     const orderedListMatch = trimmedLine.match(/^\d+\.\s+(.*)$/);
     if (orderedListMatch) {
-      currentList.push(`<li>${formatInlineMarkdown(orderedListMatch[1])}</li>`);
+      closeBulletList();
+      orderedItems.push({ text: orderedListMatch[1], subitems: [] });
       continue;
     }
 
-    closeList();
+    const bulletListMatch = trimmedLine.match(/^[-*]\s+(.*)$/);
+    if (bulletListMatch) {
+      if (orderedItems.length > 0) {
+        orderedItems[orderedItems.length - 1].subitems.push(bulletListMatch[1]);
+      } else {
+        bulletItems.push(bulletListMatch[1]);
+      }
+
+      continue;
+    }
+
+    closeBulletList();
+    closeOrderedList();
     blocks.push(`<p>${formatInlineMarkdown(trimmedLine)}</p>`);
   }
 
-  closeList();
+  closeBulletList();
+  closeOrderedList();
 
   return blocks.join("") || "<p></p>";
 }
 
 function formatInlineMarkdown(text) {
-  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*(?!\s)(.+?)(?<!\s)\*(?!\*)/g, "$1<em>$2</em>");
 }
 
 function setFormState(isBusy) {
@@ -164,7 +207,7 @@ chatForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  appendMessage("user", `You: ${userText}`);
+  appendMessage("user", userText);
   userInput.value = "";
   setFormState(true);
 
