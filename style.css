@@ -51,7 +51,7 @@ body {
   font-size: 18px;
   line-height: 1.5;
   overflow-y: auto;
-  background: #FFFFFF;
+  background: #ffffff;
   white-space: pre-line;
 }
 
@@ -59,6 +59,23 @@ body {
 .msg {
   margin-bottom: 14px;
   line-height: 1.5;
+}
+
+.msg p {
+  margin-bottom: 8px;
+}
+
+.msg p:last-child {
+  margin-bottom: 0;
+}
+
+.msg ol {
+  margin: 8px 0 8px 20px;
+  padding-left: 16px;
+}
+
+.msg li {
+  margin-bottom: 6px;
 }
 
 .msg.user {
@@ -91,7 +108,7 @@ body {
 .chat-form button {
   font-size: 18px;
   background: #000000;
-  color: #FFFFFF;
+  color: #ffffff;
   border: none;
   padding: 12px;
   width: 48px;

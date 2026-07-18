@@ -4,6 +4,8 @@ const userInput = document.getElementById("userInput");
 const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
 
+chatWindow.textContent = "👋 Hello! How can I help you today?";
+
 // Update this URL to your deployed Cloudflare Worker.
 const API_URL = "https://misty-bar-8439.mrablugh.workers.dev/";
 
@@ -54,8 +56,8 @@ Important reminders:
   },
 ];
 
-// Show an initial greeting in the chat window.
-appendMessage("assistant", "Hello! How can I help you today?");
+
+appendMessage("assistant", "");
 
 function appendMessage(role, text) {
   const messageElement = document.createElement("div");
@@ -106,7 +108,7 @@ chatForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  appendMessage("user", userText);
+  appendMessage("user", `You: ${userText}`);
   userInput.value = "";
   setFormState(true);
 
