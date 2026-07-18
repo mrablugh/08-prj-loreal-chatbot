@@ -5,8 +5,7 @@ const chatWindow = document.getElementById("chatWindow");
 const sendBtn = document.getElementById("sendBtn");
 
 // Show a friendly starter message.
-chatWindow.textContent = "👋 Hello! How can I help you today?";
-appendMessage("assistant", "");
+appendMessage("assistant", "👋 Hello! How can I help you today?");
 
 // Update this URL to your deployed Cloudflare Worker.
 const API_URL = "https://misty-bar-8439.mrablugh.workers.dev/";

@@ -59,6 +59,10 @@ body {
 .msg {
   margin-bottom: 14px;
   line-height: 1.5;
+  max-width: 82%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  white-space: normal;
 }
 
 .msg p {
@@ -79,11 +83,17 @@ body {
 }
 
 .msg.user {
-  color: #000000;
+  margin-left: auto;
+  background: #000000;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
 }
 
-.msg.ai {
-  color: #666666;
+.msg.assistant {
+  margin-right: auto;
+  background: #f3f3f3;
+  color: #000000;
+  border-bottom-left-radius: 4px;
 }
 
 /* input row */
